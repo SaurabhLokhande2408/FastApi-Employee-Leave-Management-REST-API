@@ -16,17 +16,17 @@ def get_db():
     finally:
         db.close()
 
-
+#to check
 @app.get("/greet")
 def greet():
     return {"message": "Hi welcome to my first built from scratch API i am Kaizen", "docs": "/docs"}
 
-
+#to get all the data
 @app.get('/leaves_all', response_model=list[Employee_leave_respone_pydantic])
 def get_all_data_about_leave(db: Session = Depends(get_db)):
     return db.query(database_models.Leave_request).all()  
 
-
+#to request leave
 @app.post('/to_request_leave', response_model=Employee_leave_request_pydantic)
 def request_leave(request: Employee_leave_request_pydantic, db: Session = Depends(get_db)):
     req = database_models.Leave_request(**request.model_dump())
@@ -34,8 +34,8 @@ def request_leave(request: Employee_leave_request_pydantic, db: Session = Depend
     db.commit()
     db.refresh(req)
     return req
-
-@app.delete("/deleting_request/{id}")  # ✅ removed response_model
+#to delete a request
+@app.delete("/deleting_request/{id}")  
 def delete_req(id: int, db: Session = Depends(get_db)):
     select = db.query(database_models.Leave_request).filter(database_models.Leave_request.id == id ).first()
 
@@ -48,7 +48,7 @@ def delete_req(id: int, db: Session = Depends(get_db)):
     db.delete(select)
     db.commit()
     return {"message": f"Leave request id={id} deleted successfully"}
-
+#to update a request
 @app.put("/update_request/{id}", response_model=Employee_leave_request_pydantic)
 def update(request: Employee_leave_request_pydantic, id: int, db: Session = Depends(get_db)):
     select = db.query(database_models.Leave_request).filter(
@@ -61,7 +61,7 @@ def update(request: Employee_leave_request_pydantic, id: int, db: Session = Depe
             detail=f"Leave request with id={id} not found"
         )
 
-    select.name         = request.name          #  request not Leave_request(its a class)
+    select.name         = request.name          
     select.department   = request.department
     select.reason       = request.reason
     select.total_leaves = request.total_leaves

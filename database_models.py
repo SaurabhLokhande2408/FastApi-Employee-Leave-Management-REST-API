@@ -6,7 +6,7 @@ Base=declarative_base()#parent class for all tables
 
 
 
-
+#database models used for db
 
 class Leave_request(Base):
     __tablename__ = "leave_requests"
